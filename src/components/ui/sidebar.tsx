@@ -14,8 +14,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
-const SIDEBAR_WIDTH = "14rem";
-const SIDEBAR_WIDTH_MOBILE = "16rem";
+const SIDEBAR_WIDTH = "16rem";
+const SIDEBAR_WIDTH_MOBILE = "14rem";
 const SIDEBAR_WIDTH_ICON = "3rem";
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
 
@@ -47,7 +47,7 @@ const SidebarProvider = React.forwardRef<
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
  }
->(({ defaultOpen = true, open: openProp, onOpenChange: setOpenProp, className, style, children, ...props }, ref) => {
+>(({ defaultOpen = false, open: openProp, onOpenChange: setOpenProp, className, style, children, ...props }, ref) => {
  const isMobile = useIsMobile();
  const [openMobile, setOpenMobile] = React.useState(false);
 
@@ -76,17 +76,17 @@ const SidebarProvider = React.forwardRef<
  }, [isMobile, setOpen, setOpenMobile]);
 
  // Adds a keyboard shortcut to toggle the sidebar.
- React.useEffect(() => {
-  const handleKeyDown = (event: KeyboardEvent) => {
-   if (event.key === SIDEBAR_KEYBOARD_SHORTCUT && (event.metaKey || event.ctrlKey)) {
-    event.preventDefault();
-    toggleSidebar();
-   }
-  };
+ //  React.useEffect(() => {
+ //   const handleKeyDown = (event: KeyboardEvent) => {
+ //    if (event.key === SIDEBAR_KEYBOARD_SHORTCUT && (event.metaKey || event.ctrlKey)) {
+ //     event.preventDefault();
+ //     toggleSidebar();
+ //    }
+ //   };
 
-  window.addEventListener("keydown", handleKeyDown);
-  return () => window.removeEventListener("keydown", handleKeyDown);
- }, [toggleSidebar]);
+ //   window.addEventListener("keydown", handleKeyDown);
+ //   return () => window.removeEventListener("keydown", handleKeyDown);
+ //  }, [toggleSidebar]);
 
  // We add a state so that we can do data-state="expanded" or "collapsed".
  // This makes it easier to style the sidebar with Tailwind classes.
@@ -136,7 +136,7 @@ const Sidebar = React.forwardRef<
   collapsible?: "offcanvas" | "icon" | "none";
  }
 >(({ side = "left", variant = "sidebar", collapsible = "offcanvas", className, children, ...props }, ref) => {
- const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
+ const { isMobile, state, openMobile, setOpenMobile, setOpen } = useSidebar();
 
  if (collapsible === "none") {
   return (
@@ -169,11 +169,13 @@ const Sidebar = React.forwardRef<
  return (
   <div
    ref={ref}
-   className="group peer hidden md:block text-sidebar-foreground"
+   className="group peer hidden md:block fixed text-sidebar-foreground"
    data-state={state}
    data-collapsible={state === "collapsed" ? collapsible : ""}
    data-variant={variant}
    data-side={side}
+   onMouseEnter={() => setOpen(true)}
+   onMouseLeave={() => setOpen(false)}
   >
    {/* This is what handles the sidebar gap on desktop */}
    <div

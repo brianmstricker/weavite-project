@@ -32,8 +32,10 @@ export default function RootLayout({
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
      <SidebarProvider>
       <Sidemenu />
-      <main>
-       {/* <SidebarTrigger /> */}
+      <main className="flex-1 md:ml-16 p-2">
+       <div className="md:hidden">
+        <SidebarTrigger />
+       </div>
        {children}
       </main>
      </SidebarProvider>

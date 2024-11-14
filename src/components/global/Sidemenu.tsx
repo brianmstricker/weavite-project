@@ -50,7 +50,6 @@ const Sidemenu = () => {
      <SidebarGroupLabel>Application</SidebarGroupLabel>
      <SidebarGroupContent>
       <SidebarMenu>
-       {/* <SidebarTrigger /> */}
        {items.map((item) => (
         <SidebarMenuItem key={item.title}>
          <SidebarMenuButton asChild>
