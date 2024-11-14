@@ -11,7 +11,7 @@ type Row = {
  position: number;
 };
 
-export async function initWeaviteClient() {
+export async function initWeaviteAndGetData() {
  const wcdUrl = process.env.WCD_URL as string;
  const wcdApiKey = process.env.WCD_API_KEY as string;
 
@@ -23,9 +23,10 @@ export async function initWeaviteClient() {
   await client.isReady();
 
   // await insertData(client);
-  await getDBData(client);
+  const res = await getDBData(client);
 
   client.close();
+  return res;
  } catch (error) {
   console.error(error);
  }
@@ -54,12 +55,15 @@ async function insertData(client: WeaviateClient) {
  const schema = client.collections.get("Google_Shopping");
  const data = await getExternalData();
  const result = await schema.data.insertMany(data);
- console.log("Insertion response: ", result);
+ // console.log("Insertion response: ", result);
 }
 
 async function getDBData(client: WeaviateClient) {
- const questions = client.collections.get("Google_Shopping");
- const response = await questions.query.fetchObjects();
- console.log("DB Data: ", response.objects);
+ const schema = client.collections.get("Google_Shopping");
+ const response = await schema.query.fetchObjects({
+  limit: 100,
+ });
+ // console.log("DB Data: ", response.objects);
+ // console.log("length", response.objects.length);
  return response.objects;
 }
