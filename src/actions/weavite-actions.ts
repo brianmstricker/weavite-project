@@ -11,6 +11,14 @@ type Row = {
  position: number;
 };
 
+type Data = {
+ image: string;
+ item_ID: string;
+ query: string;
+ title: string;
+ position: number;
+};
+
 export async function initWeaviteAndGetData() {
  const wcdUrl = process.env.WCD_URL as string;
  const wcdApiKey = process.env.WCD_API_KEY as string;
@@ -23,6 +31,8 @@ export async function initWeaviteAndGetData() {
   await client.isReady();
 
   // await insertData(client);
+  // await getExternalData();
+
   const res = await getDBData(client);
 
   client.close();
@@ -43,6 +53,8 @@ async function getExternalData() {
   `https://datasets-server.huggingface.co/rows?dataset=${dataset}&config=${config}&split=${split}&offset=${offset}&length=${length}`
  );
  const allData = await response.json();
+ console.log(allData.rows.length);
+ console.log(allData.rows[0]);
  const data = allData.rows.map((item: { row: Row }) => ({
   ...item.row,
   image: item.row.image.src,
@@ -58,12 +70,21 @@ async function insertData(client: WeaviateClient) {
  // console.log("Insertion response: ", result);
 }
 
-async function getDBData(client: WeaviateClient) {
+async function getDBData(client: WeaviateClient): Promise<Data[]> {
  const schema = client.collections.get("Google_Shopping");
  const response = await schema.query.fetchObjects({
   limit: 100,
  });
+ const data: Data[] = response.objects.map((obj: any) => ({
+  image: obj.properties.image,
+  item_ID: obj.properties.item_ID,
+  query: obj.properties.query,
+  title: obj.properties.title,
+  position: obj.properties.position,
+ }));
+ return data;
+ // console.log("response", response.objects);
  // console.log("DB Data: ", response.objects);
  // console.log("length", response.objects.length);
- return response.objects;
+ // return response.objects;
 }

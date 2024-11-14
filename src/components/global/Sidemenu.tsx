@@ -1,4 +1,4 @@
-import { Home, Inbox, Calendar, Search, Settings } from "lucide-react";
+import { Home, Inbox, Calendar, Search, Settings, Lightbulb, Aperture } from "lucide-react";
 import {
  Sidebar,
  SidebarContent,
@@ -47,9 +47,17 @@ const Sidemenu = () => {
   <Sidebar variant="floating" collapsible="icon">
    <SidebarContent>
     <SidebarGroup>
-     <SidebarGroupLabel>Application</SidebarGroupLabel>
+     {/* <SidebarGroupLabel>Application</SidebarGroupLabel> */}
      <SidebarGroupContent>
       <SidebarMenu>
+       <SidebarMenuItem className="mb-10">
+        <SidebarMenuButton asChild variant="outline" className="hover:bg-background">
+         <Link href="/">
+          <Aperture className="!size-5 -translate-x-0.5" />
+          <span className="text-xl">FastBuy</span>
+         </Link>
+        </SidebarMenuButton>
+       </SidebarMenuItem>
        {items.map((item) => (
         <SidebarMenuItem key={item.title}>
          <SidebarMenuButton asChild>
