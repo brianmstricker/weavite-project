@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/global/ThemeProvider";
 import Sidemenu from "@/components/global/Sidemenu";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import TopBar from "@/components/global/TopBar";
 
 const geistSans = localFont({
  src: "./fonts/GeistVF.woff",
@@ -32,10 +33,8 @@ export default function RootLayout({
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
      <SidebarProvider>
       <Sidemenu />
-      <main className="flex-1 md:ml-16 p-2">
-       <div className="md:hidden">
-        <SidebarTrigger />
-       </div>
+      <main className="flex-1 md:ml-16 p-4">
+       <TopBar />
        {children}
       </main>
      </SidebarProvider>

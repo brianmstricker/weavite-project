@@ -169,7 +169,7 @@ const Sidebar = React.forwardRef<
  return (
   <div
    ref={ref}
-   className="group peer hidden md:block fixed text-sidebar-foreground"
+   className="group peer hidden md:block fixed text-sidebar-foreground z-10"
    data-state={state}
    data-collapsible={state === "collapsed" ? collapsible : ""}
    data-variant={variant}
@@ -196,7 +196,7 @@ const Sidebar = React.forwardRef<
       : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
      // Adjust the padding for floating and inset variants.
      variant === "floating" || variant === "inset"
-      ? "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4)_+2px)]"
+      ? "px-2 py-4 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4)_+2px)]"
       : "group-data-[collapsible=icon]:w-[--sidebar-width-icon] group-data-[side=left]:border-r group-data-[side=right]:border-l",
      className
     )}
@@ -224,7 +224,7 @@ const SidebarTrigger = React.forwardRef<React.ElementRef<typeof Button>, React.C
     data-sidebar="trigger"
     variant="ghost"
     size="icon"
-    className={cn("h-7 w-7", className)}
+    className={cn("h-8 w-8", className)}
     onClick={(event) => {
      onClick?.(event);
      toggleSidebar();

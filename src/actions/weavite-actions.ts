@@ -1,5 +1,6 @@
 "use server";
 import weaviate, { WeaviateClient } from "weaviate-client";
+import axios from "axios";
 
 type Row = {
  image: {
@@ -31,15 +32,21 @@ export async function initWeaviteAndGetData() {
   await client.isReady();
 
   // await insertData(client);
-  // await getExternalData();
 
   const res = await getDBData(client);
+  // console.log(res.length);
 
   client.close();
   return res;
  } catch (error) {
   console.error(error);
  }
+}
+
+async function downloadImage(url: string): Promise<string> {
+ const response = await axios.get(url, { responseType: "arraybuffer" });
+ const base64Image = Buffer.from(response.data, "binary").toString("base64");
+ return base64Image;
 }
 
 async function getExternalData() {
@@ -53,28 +60,32 @@ async function getExternalData() {
   `https://datasets-server.huggingface.co/rows?dataset=${dataset}&config=${config}&split=${split}&offset=${offset}&length=${length}`
  );
  const allData = await response.json();
- console.log(allData.rows.length);
- console.log(allData.rows[0]);
- const data = allData.rows.map((item: { row: Row }) => ({
-  ...item.row,
-  image: item.row.image.src,
- }));
+ const data = await Promise.all(
+  allData.rows.map(async (item: { row: Row }) => {
+   const imageUrl = item.row.image.src;
+   const imageBuffer = await downloadImage(imageUrl);
+   return { ...item.row, image: imageBuffer };
+  })
+ );
  // console.log(data);
  return data;
 }
 
 async function insertData(client: WeaviateClient) {
  const schema = client.collections.get("Google_Shopping");
+ // const clearSchema = await schema.data.deleteMany(schema.filter.byProperty("item_ID").like("*"));
+ // console.log("Clear response: ", clearSchema);
  const data = await getExternalData();
  const result = await schema.data.insertMany(data);
- // console.log("Insertion response: ", result);
+ console.log("Insertion response: ", result);
 }
 
 async function getDBData(client: WeaviateClient): Promise<Data[]> {
  const schema = client.collections.get("Google_Shopping");
  const response = await schema.query.fetchObjects({
-  limit: 100,
+  limit: 1000,
  });
+ // console.log("response", response.objects);
  const data: Data[] = response.objects.map((obj: any) => ({
   image: obj.properties.image,
   item_ID: obj.properties.item_ID,
@@ -83,8 +94,4 @@ async function getDBData(client: WeaviateClient): Promise<Data[]> {
   position: obj.properties.position,
  }));
  return data;
- // console.log("response", response.objects);
- // console.log("DB Data: ", response.objects);
- // console.log("length", response.objects.length);
- // return response.objects;
 }
