@@ -10,12 +10,12 @@ export default async function Home() {
   <div className="grid grid-cols-2 min-[500px]:grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 min-[1400px]:grid-cols-8 gap-4">
    {allData.map((item) => (
     <Card key={item.item_ID} className="overflow-hidden">
-     <div className="relative aspect-[1/1] md:aspect-[1.15/1]">
+     <div className="relative cursor-pointer overflow-hidden max-w-full w-full h-[140px] sm:h-[160px] md:h-[180px] lg:h-[200px]">
       <Image
        src={`data:image/jpeg;base64,${item.image}`}
        alt={item.title}
        fill
-       sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+       className="transition-all duration-200 hover:scale-[1.003] contrast-[1.05] hover:contrast-[1.08] ease-in-out"
       />
      </div>
      <div className="p-2">
