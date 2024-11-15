@@ -1,5 +1,7 @@
 # todo
 
+-<https://weaviate.io/developers/weaviate/quickstart>
+
 -generate prices for items
 -zustand for state management
 -scroll based pagination

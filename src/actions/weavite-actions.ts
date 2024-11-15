@@ -20,9 +20,26 @@ type Data = {
  position: number;
 };
 
+const cache = new Map<string, { data: Data[]; timestamp: number }>();
+const cacheTTL = 1000 * 60 * 60; // 1 hour
+
 export async function initWeaviteAndGetData() {
  const wcdUrl = process.env.WCD_URL as string;
  const wcdApiKey = process.env.WCD_API_KEY as string;
+
+ const cacheKey = "weavite-data";
+ const now = Date.now();
+
+ if (cache.has(cacheKey)) {
+  const cachedData = cache.get(cacheKey);
+  if (cachedData && now - cachedData.timestamp < cacheTTL) {
+   console.log("Cache hit");
+   return cachedData.data;
+  } else {
+   console.log("Cache miss");
+   cache.delete(cacheKey);
+  }
+ }
 
  try {
   const client: WeaviateClient = await weaviate.connectToWeaviateCloud(wcdUrl, {
@@ -37,6 +54,7 @@ export async function initWeaviteAndGetData() {
   // console.log(res.length);
 
   client.close();
+  cache.set(cacheKey, { data: res, timestamp: now });
   return res;
  } catch (error) {
   console.error(error);
