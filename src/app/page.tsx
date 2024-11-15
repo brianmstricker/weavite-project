@@ -2,8 +2,12 @@ import { initWeaviteAndGetData } from "@/actions/weavite-actions";
 import ProductCard from "@/components/ProductCard";
 import ScrollProvider from "@/components/ScrollProvider";
 
-export default async function Home() {
- const data = await initWeaviteAndGetData();
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
+
+export default async function Home({ searchParams }: { searchParams: SearchParams }) {
+ const page = (await searchParams).page;
+ console.log(page);
+ const data = await initWeaviteAndGetData(Number(page) || 1);
  if (!data) return <div>Error</div>;
  if (data.length === 0) return <div>No data :(</div>;
  return (

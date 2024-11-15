@@ -11,7 +11,6 @@ const ScrollProvider = ({ children }: { children: React.ReactNode }) => {
   const getMaxScroll = () => {
    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
    setMaxScroll(maxScroll);
-   console.log(maxScroll);
   };
   const handleScroll = () => {
    const scrollPosition = window.scrollY;
@@ -26,9 +25,9 @@ const ScrollProvider = ({ children }: { children: React.ReactNode }) => {
    window.removeEventListener("resize", getMaxScroll);
   };
  }, []);
- console.log("max", maxScroll);
- console.log("cur", debouncedScrollPos);
- // todo: if debouncedScrollPos > maxScroll/2, fetch more data
+ // console.log("max", maxScroll);
+ // console.log("cur", debouncedScrollPos);
+ // todo: if debouncedScrollPos > maxScroll/2.25, set searchParams.page to page + 1
  return <>{children}</>;
 };
 export default ScrollProvider;
