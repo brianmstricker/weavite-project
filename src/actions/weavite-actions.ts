@@ -1,24 +1,7 @@
 "use server";
 import weaviate, { WeaviateClient } from "weaviate-client";
 import axios from "axios";
-
-type Row = {
- image: {
-  src: string;
- };
- item_ID: string;
- query: string;
- title: string;
- position: number;
-};
-
-type Data = {
- image: string;
- item_ID: string;
- query: string;
- title: string;
- position: number;
-};
+import { Data, Row } from "@/types";
 
 const cache = new Map<string, { data: Data[]; timestamp: number }>();
 const cacheTTL = 1000 * 60 * 60; // 1 hour

@@ -11,7 +11,7 @@ import {
  SidebarMenuButton,
  SidebarMenuItem,
  SidebarTrigger,
-} from "../ui/sidebar";
+} from "./ui/sidebar";
 import Link from "next/link";
 import { ThemeToggle } from "./ThemeToggle";
 
