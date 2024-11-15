@@ -51,14 +51,14 @@ const Sidemenu = () => {
      {/* <SidebarGroupLabel>Application</SidebarGroupLabel> */}
      <SidebarGroupContent className="h-full">
       <SidebarMenu className="h-full">
-       <SidebarMenuItem className="mb-6">
+       {/* <SidebarMenuItem className="mb-6">
         <SidebarMenuButton asChild variant="outline" className="hover:bg-background">
          <Link href="/">
-          <Aperture className="!size-5 -translate-x-0.5" />
+          <Aperture className="!size-5 -translate-x-0.5 text-orange-500 dark:text-orange-600" />
           <span className="text-xl">FastBuy</span>
          </Link>
         </SidebarMenuButton>
-       </SidebarMenuItem>
+       </SidebarMenuItem> */}
        {items.map((item) => (
         <SidebarMenuItem key={item.title}>
          <SidebarMenuButton asChild>

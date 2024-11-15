@@ -6,7 +6,7 @@ import { Data, Row } from "@/types";
 const cache = new Map<string, { data: Data[]; timestamp: number }>();
 const cacheTTL = 1000 * 60 * 60; // 1 hour
 
-export async function initWeaviteAndGetData() {
+export async function initWeaviteAndGetData(pageNumber: number = 1) {
  const wcdUrl = process.env.WCD_URL as string;
  const wcdApiKey = process.env.WCD_API_KEY as string;
 
@@ -31,7 +31,7 @@ export async function initWeaviteAndGetData() {
 
   // await insertData(client);
 
-  const res = await getDBData(client);
+  const res = await getDBData(client, pageNumber);
   // console.log(res.length);
 
   client.close();
@@ -79,10 +79,11 @@ async function insertData(client: WeaviateClient) {
  console.log("Insertion response: ", result);
 }
 
-async function getDBData(client: WeaviateClient): Promise<Data[]> {
+async function getDBData(client: WeaviateClient, page: number = 1): Promise<Data[]> {
  const schema = client.collections.get("Google_Shopping");
  const response = await schema.query.fetchObjects({
-  limit: 1000,
+  limit: 24,
+  offset: (page - 1) * 24,
  });
  // console.log("response", response.objects);
  const data: Data[] = response.objects.map((obj: any) => ({

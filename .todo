@@ -6,3 +6,4 @@
 -zustand for state management
 -scroll based pagination
 -rating system?
+-use faker to add prices to each item
