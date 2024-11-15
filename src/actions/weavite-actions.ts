@@ -33,10 +33,8 @@ export async function initWeaviteAndGetData() {
  if (cache.has(cacheKey)) {
   const cachedData = cache.get(cacheKey);
   if (cachedData && now - cachedData.timestamp < cacheTTL) {
-   console.log("Cache hit");
    return cachedData.data;
   } else {
-   console.log("Cache miss");
    cache.delete(cacheKey);
   }
  }

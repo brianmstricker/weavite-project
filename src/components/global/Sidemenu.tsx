@@ -13,6 +13,7 @@ import {
  SidebarTrigger,
 } from "../ui/sidebar";
 import Link from "next/link";
+import { ThemeToggle } from "./ThemeToggle";
 
 const items = [
  {
@@ -48,8 +49,8 @@ const Sidemenu = () => {
    <SidebarContent>
     <SidebarGroup>
      {/* <SidebarGroupLabel>Application</SidebarGroupLabel> */}
-     <SidebarGroupContent>
-      <SidebarMenu>
+     <SidebarGroupContent className="h-full">
+      <SidebarMenu className="h-full">
        <SidebarMenuItem className="mb-10">
         <SidebarMenuButton asChild variant="outline" className="hover:bg-background">
          <Link href="/">
@@ -68,6 +69,11 @@ const Sidemenu = () => {
          </SidebarMenuButton>
         </SidebarMenuItem>
        ))}
+       <SidebarMenuItem className="mt-auto -translate-x-0.5">
+        <SidebarMenuButton asChild>
+         <ThemeToggle />
+        </SidebarMenuButton>
+       </SidebarMenuItem>
       </SidebarMenu>
      </SidebarGroupContent>
     </SidebarGroup>

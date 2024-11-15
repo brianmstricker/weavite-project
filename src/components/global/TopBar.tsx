@@ -10,7 +10,7 @@ const TopBar = () => {
     <div className="md:hidden">
      <SidebarTrigger />
     </div>
-    <Link href="/" className="flex items-center gap-1">
+    <Link href="/" className="flex items-center gap-1 py-0.5 px-1">
      <Aperture className="!size-5 -translate-x-0.5" />
      <span className="text-xl">FastBuy</span>
     </Link>
