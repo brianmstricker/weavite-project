@@ -1,6 +1,8 @@
 import { initWeaviteAndGetData } from "@/actions/weavite-actions";
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
+import { Suspense } from "react";
+import Loading from "./loading";
 
 export default async function Home() {
  const allData = await initWeaviteAndGetData();
@@ -15,7 +17,7 @@ export default async function Home() {
        src={`data:image/jpeg;base64,${item.image}`}
        alt={item.title}
        fill
-       className="transition-all duration-200 ease-in-out contrast-[1.03] hover:contrast-[1.05]"
+       className="transition-all duration-150 ease-linear contrast-[1.03] hover:scale-[1.02]"
       />
      </div>
      <div className="p-2">

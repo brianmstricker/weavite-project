@@ -51,7 +51,7 @@ const Sidemenu = () => {
      {/* <SidebarGroupLabel>Application</SidebarGroupLabel> */}
      <SidebarGroupContent className="h-full">
       <SidebarMenu className="h-full">
-       <SidebarMenuItem className="mb-10">
+       <SidebarMenuItem className="mb-6">
         <SidebarMenuButton asChild variant="outline" className="hover:bg-background">
          <Link href="/">
           <Aperture className="!size-5 -translate-x-0.5" />
@@ -69,7 +69,7 @@ const Sidemenu = () => {
          </SidebarMenuButton>
         </SidebarMenuItem>
        ))}
-       <SidebarMenuItem className="mt-auto -translate-x-0.5">
+       <SidebarMenuItem className="mt-auto -translate-x-0.5 pt-2">
         <SidebarMenuButton asChild>
          <ThemeToggle />
         </SidebarMenuButton>
