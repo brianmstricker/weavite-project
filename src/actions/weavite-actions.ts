@@ -4,9 +4,10 @@ import axios from "axios";
 import { Data, Row } from "@/types";
 
 const cache = new Map<string, { data: Data[]; timestamp: number }>();
-const cacheTTL = 1000 * 60 * 60; // 1 hour
+const cacheTTL = 1000; // 1 ms testing
+// const cacheTTL = 1000 * 60 * 60; // 1 hour
 
-export async function initWeaviteAndGetData(pageNumber: number = 1) {
+export async function initWeaviteAndGetData(pageNumber: number = 1, searchQuery: string = "") {
  const wcdUrl = process.env.WCD_URL as string;
  const wcdApiKey = process.env.WCD_API_KEY as string;
 
@@ -31,12 +32,12 @@ export async function initWeaviteAndGetData(pageNumber: number = 1) {
 
   // await insertData(client);
 
-  const res = await getDBData(client, pageNumber);
+  const data = await getDBData(client, pageNumber, searchQuery);
   // console.log(res.length);
 
   client.close();
-  cache.set(cacheKey, { data: res, timestamp: now });
-  return res;
+  cache.set(cacheKey, { data, timestamp: now });
+  return data;
  } catch (error) {
   console.error(error);
  }
@@ -79,7 +80,7 @@ async function insertData(client: WeaviateClient) {
  console.log("Insertion response: ", result);
 }
 
-async function getDBData(client: WeaviateClient, page: number = 1): Promise<Data[]> {
+async function getDBData(client: WeaviateClient, page: number = 1, searchQuery: string): Promise<Data[]> {
  const schema = client.collections.get("Google_Shopping");
  const response = await schema.query.fetchObjects({
   limit: 24,
