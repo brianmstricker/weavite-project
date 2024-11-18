@@ -12,23 +12,29 @@ const PaginationHandler = ({ initialData }: { initialData: Data[] }) => {
  const [page, setPage] = useState<number>(1);
  const [data, setData] = useState<Data[]>(initialData);
  const [loading, setLoading] = useState<boolean>(false);
+ const [hasFetched, setHasFetched] = useState(false);
+ const [prevMaxScroll, setPrevMaxScroll] = useState(0);
  const [debouncedScrollPos] = useDebounce(currentScrollPos, 20);
- const hasFetched = useRef(false);
 
- const loadMore = useCallback(async () => {
-  if (loading || hasFetched.current) return;
-  const nextPage = page + 1;
-  setLoading(true);
-  hasFetched.current = true;
-  const fetchedData = await initWeaviteAndGetData(nextPage);
-  if (fetchedData) {
-   setPage(nextPage);
-   setData((prevData) => [...prevData, ...fetchedData]);
-   setLoading(false);
-  } else {
+ const loadMoreData = useCallback(async () => {
+  if (maxScroll === 0 || data.length === 0 || loading || hasFetched || maxScroll === prevMaxScroll) return;
+  try {
+   const nextPage = page + 1;
+   setLoading(true);
+   setHasFetched(true);
+   const fetchedData = await initWeaviteAndGetData(nextPage);
+   if (fetchedData && fetchedData.length > 0) {
+    setPage(nextPage);
+    setData((prevData) => [...prevData, ...fetchedData]);
+    setLoading(false);
+   } else {
+    setLoading(false);
+   }
+  } catch (error) {
+   console.error(error);
    setLoading(false);
   }
- }, [page, loading]);
+ }, [page, loading, maxScroll, hasFetched, prevMaxScroll, data.length]);
 
  useEffect(() => {
   const getMaxScroll = () => {
@@ -38,30 +44,42 @@ const PaginationHandler = ({ initialData }: { initialData: Data[] }) => {
   const handleScroll = () => {
    setCurrentScrollPos(window.scrollY);
   };
+  getMaxScroll();
+  handleScroll();
   window.addEventListener("scroll", handleScroll);
-  window.addEventListener("load", getMaxScroll);
   window.addEventListener("resize", getMaxScroll);
   return () => {
    window.removeEventListener("scroll", handleScroll);
-   window.removeEventListener("load", getMaxScroll);
    window.removeEventListener("resize", getMaxScroll);
   };
  }, []);
 
  useEffect(() => {
-  if (debouncedScrollPos > maxScroll / 2 && !hasFetched.current) {
-   loadMore();
+  const loadData = () => {
+   if (maxScroll === 0 || data.length === 0 || loading || hasFetched || maxScroll === prevMaxScroll) return;
+   if (debouncedScrollPos > maxScroll / 1.35) {
+    setLoading(true);
+    loadMoreData();
+   }
+  };
+  loadData();
+ }, [debouncedScrollPos, maxScroll, loading, hasFetched, loadMoreData, prevMaxScroll, data.length]);
 
-   const timeout = setTimeout(() => {
-    console.log("here");
-    hasFetched.current = false;
-   }, 100);
-   return () => {
-    clearTimeout(timeout);
-   };
-  }
- }, [debouncedScrollPos, maxScroll, loadMore, loading]);
- console.log(data.length);
+ useEffect(() => {
+  let fetchTimeoutID: NodeJS.Timeout;
+  const updateScroll = () => {
+   if (loading || !hasFetched) return;
+   setPrevMaxScroll(maxScroll);
+   fetchTimeoutID = setTimeout(() => {
+    setMaxScroll(document.documentElement.scrollHeight - window.innerHeight);
+    setHasFetched(false);
+   }, 1000);
+  };
+  updateScroll();
+  return () => {
+   if (fetchTimeoutID) clearTimeout(fetchTimeoutID);
+  };
+ }, [loading, maxScroll, hasFetched]);
  return (
   <div className="grid grid-cols-2 min-[500px]:grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 min-[1400px]:grid-cols-8 gap-4">
    {data.map((product) => (

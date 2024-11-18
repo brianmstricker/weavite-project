@@ -4,14 +4,13 @@ import axios from "axios";
 import { Data, Row } from "@/types";
 
 const cache = new Map<string, { data: Data[]; timestamp: number }>();
-const cacheTTL = 1000; // 1 ms testing
-// const cacheTTL = 1000 * 60 * 60; // 1 hour
+const cacheTTL = 1000 * 60 * 60; // 1 hour
 
 export async function initWeaviteAndGetData(pageNumber: number = 1, searchQuery: string = "") {
  const wcdUrl = process.env.WCD_URL as string;
  const wcdApiKey = process.env.WCD_API_KEY as string;
 
- const cacheKey = "weavite-data";
+ const cacheKey = `weavite-data-${pageNumber}`;
  const now = Date.now();
 
  if (cache.has(cacheKey)) {
@@ -33,13 +32,13 @@ export async function initWeaviteAndGetData(pageNumber: number = 1, searchQuery:
   // await insertData(client);
 
   const data = await getDBData(client, pageNumber, searchQuery);
-  // console.log(res.length);
 
   client.close();
   cache.set(cacheKey, { data, timestamp: now });
   return data;
  } catch (error) {
   console.error(error);
+  return null;
  }
 }
 

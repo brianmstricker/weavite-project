@@ -15,6 +15,7 @@ const ProductCard = ({ product }: { product: Product }) => {
      alt={product.title}
      fill
      className="transition-all duration-150 ease-linear contrast-[1.03] hover:scale-[1.02]"
+     loading="lazy"
     />
    </div>
    <div className="p-2 h-full flex flex-col justify-between">
