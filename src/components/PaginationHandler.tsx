@@ -7,6 +7,7 @@ import ProductCard from "./ProductCard";
 import { Card } from "./ui/card";
 
 const PaginationHandler = ({ initialData }: { initialData: Data[] }) => {
+ // todo: make it a virtualized list https://dev.to/adamklein/build-your-own-virtual-scroll-part-i-11ib
  const [maxScroll, setMaxScroll] = useState(0);
  const [currentScrollPos, setCurrentScrollPos] = useState(0);
  const [page, setPage] = useState<number>(1);
@@ -73,7 +74,7 @@ const PaginationHandler = ({ initialData }: { initialData: Data[] }) => {
    fetchTimeoutID = setTimeout(() => {
     setMaxScroll(document.documentElement.scrollHeight - window.innerHeight);
     setHasFetched(false);
-   }, 1000);
+   }, 750);
   };
   updateScroll();
   return () => {

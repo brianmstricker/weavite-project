@@ -29,7 +29,8 @@ export async function initWeaviteAndGetData(pageNumber: number = 1, searchQuery:
 
   await client.isReady();
 
-  // await insertData(client);
+  // const data = await clearData(client);
+  // const data = await insertData(client);
 
   const data = await getDBData(client, pageNumber, searchQuery);
 
@@ -48,11 +49,10 @@ async function downloadImage(url: string): Promise<string> {
  return base64Image;
 }
 
-async function getExternalData() {
+async function getExternalData(offset: number = 0) {
  const dataset = "Marqo/google-shopping-general-eval-100k";
  const config = "default";
  const split = "test";
- const offset = 0;
  const length = 100;
 
  const response = await fetch(
@@ -66,17 +66,34 @@ async function getExternalData() {
    return { ...item.row, image: imageBuffer };
   })
  );
- // console.log(data);
  return data;
 }
 
 async function insertData(client: WeaviateClient) {
  const schema = client.collections.get("Google_Shopping");
- // const clearSchema = await schema.data.deleteMany(schema.filter.byProperty("item_ID").like("*"));
- // console.log("Clear response: ", clearSchema);
- const data = await getExternalData();
- const result = await schema.data.insertMany(data);
- console.log("Insertion response: ", result);
+ const totalItems = 1000;
+ const batchSize = 100;
+ const processedItems = new Set<string>();
+ for (let offset = 0; offset < totalItems; offset += batchSize) {
+  console.log(`Fetched items ${offset} to ${offset + batchSize}:`);
+  const data = await getExternalData(offset);
+  const newData = data.filter((item: Data) => {
+   if (processedItems.has(item.title)) {
+    console.log(`Skipping duplicate item: ${item.title}`);
+    return false;
+   }
+   processedItems.add(item.title);
+   return true;
+  });
+  if (newData.length > 0) {
+   await schema.data.insertMany(newData);
+   console.log(`Inserted ${newData.length} new items`);
+  } else {
+   console.log("No new items to insert in this batch");
+  }
+ }
+ await new Promise((resolve) => setTimeout(resolve, 1000));
+ console.log(`Total unique items processed: ${processedItems.size}`);
 }
 
 async function getDBData(client: WeaviateClient, page: number = 1, searchQuery: string): Promise<Data[]> {
@@ -85,7 +102,6 @@ async function getDBData(client: WeaviateClient, page: number = 1, searchQuery: 
   limit: 24,
   offset: (page - 1) * 24,
  });
- // console.log("response", response.objects);
  const data: Data[] = response.objects.map((obj: any) => ({
   image: obj.properties.image,
   item_ID: obj.properties.item_ID,
@@ -94,4 +110,10 @@ async function getDBData(client: WeaviateClient, page: number = 1, searchQuery: 
   position: obj.properties.position,
  }));
  return data;
+}
+
+async function clearData(client: WeaviateClient) {
+ const schema = client.collections.get("Google_Shopping");
+ const clearSchema = await schema.data.deleteMany(schema.filter.byProperty("item_ID").like("*"));
+ console.log("Clear response: ", clearSchema);
 }
