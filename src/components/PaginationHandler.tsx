@@ -2,12 +2,12 @@
 import { initWeaviteAndGetData } from "@/actions/weavite-actions";
 import { Data } from "@/types";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useDebounce } from "use-debounce";
 import ProductCard from "./ProductCard";
 import { Card } from "./ui/card";
+import throttle from "lodash.throttle";
 
 const PaginationHandler = ({ initialData }: { initialData: Data[] }) => {
- // todo: make it a virtualized list https://dev.to/adamklein/build-your-own-virtual-scroll-part-i-11ib
+ // todo: make it a virtualized list https://dev.to/adamklein/build-your-own-virtual-scroll-part-i-11ib or https://tanstack.com/virtual/latest/docs/introduction
  const [maxScroll, setMaxScroll] = useState(0);
  const [currentScrollPos, setCurrentScrollPos] = useState(0);
  const [page, setPage] = useState<number>(1);
@@ -15,7 +15,6 @@ const PaginationHandler = ({ initialData }: { initialData: Data[] }) => {
  const [loading, setLoading] = useState<boolean>(false);
  const [hasFetched, setHasFetched] = useState(false);
  const [prevMaxScroll, setPrevMaxScroll] = useState(0);
- const [debouncedScrollPos] = useDebounce(currentScrollPos, 20);
 
  const loadMoreData = useCallback(async () => {
   if (maxScroll === 0 || data.length === 0 || loading || hasFetched || maxScroll === prevMaxScroll) return;
@@ -47,24 +46,28 @@ const PaginationHandler = ({ initialData }: { initialData: Data[] }) => {
   };
   getMaxScroll();
   handleScroll();
-  window.addEventListener("scroll", handleScroll);
-  window.addEventListener("resize", getMaxScroll);
+  const throttledGetMaxScroll = throttle(getMaxScroll, 500);
+  const throttledHandleScroll = throttle(handleScroll, 500);
+  window.addEventListener("scroll", throttledHandleScroll);
+  window.addEventListener("resize", throttledGetMaxScroll);
   return () => {
-   window.removeEventListener("scroll", handleScroll);
-   window.removeEventListener("resize", getMaxScroll);
+   window.removeEventListener("scroll", throttledHandleScroll);
+   window.removeEventListener("resize", throttledGetMaxScroll);
+   throttledGetMaxScroll.cancel();
+   throttledHandleScroll.cancel();
   };
  }, []);
 
  useEffect(() => {
   const loadData = () => {
    if (maxScroll === 0 || data.length === 0 || loading || hasFetched || maxScroll === prevMaxScroll) return;
-   if (debouncedScrollPos > maxScroll / 1.35) {
+   if (currentScrollPos > maxScroll / 1.35) {
     setLoading(true);
     loadMoreData();
    }
   };
   loadData();
- }, [debouncedScrollPos, maxScroll, loading, hasFetched, loadMoreData, prevMaxScroll, data.length]);
+ }, [currentScrollPos, maxScroll, loading, hasFetched, loadMoreData, prevMaxScroll, data.length]);
 
  useEffect(() => {
   let fetchTimeoutID: NodeJS.Timeout;
@@ -81,6 +84,7 @@ const PaginationHandler = ({ initialData }: { initialData: Data[] }) => {
    if (fetchTimeoutID) clearTimeout(fetchTimeoutID);
   };
  }, [loading, maxScroll, hasFetched]);
+
  return (
   <div className="grid grid-cols-2 min-[500px]:grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 min-[1400px]:grid-cols-8 gap-4">
    {data.map((product) => (
