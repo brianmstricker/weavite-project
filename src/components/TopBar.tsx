@@ -1,9 +1,7 @@
 import { Aperture, Search, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { SidebarTrigger } from "./ui/sidebar";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import Cart from "./Cart";
 
 const TopBar = () => {
  return (
@@ -18,11 +16,7 @@ const TopBar = () => {
     <Button variant="ghost" size="icon" className="h-8 w-8">
      <Search />
     </Button>
-    <SidebarTrigger>
-     <div className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-8 w-8")}>
-      <ShoppingCart />
-     </div>
-    </SidebarTrigger>
+    <Cart />
    </div>
   </div>
  );

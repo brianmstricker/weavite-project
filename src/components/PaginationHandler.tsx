@@ -7,7 +7,6 @@ import { Card } from "./ui/card";
 import throttle from "lodash.throttle";
 
 const PaginationHandler = ({ initialData }: { initialData: Data[] }) => {
- // todo: make it a virtualized list https://dev.to/adamklein/build-your-own-virtual-scroll-part-i-11ib or https://tanstack.com/virtual/latest/docs/introduction
  const [maxScroll, setMaxScroll] = useState(0);
  const [currentScrollPos, setCurrentScrollPos] = useState(0);
  const [page, setPage] = useState<number>(1);

@@ -2,8 +2,11 @@
 
 -<https://weaviate.io/developers/weaviate/quickstart>
 
--generate prices for items
+(important)
 -zustand for state management
--scroll based pagination
+
+(optional)
+-generate prices for items
 -rating system?
 -use faker to add prices to each item
+-make a virtualized list <https://dev.to/adamklein/build-your-own-virtual-scroll-part-i-11ib> or <https://tanstack.com/virtual/latest/docs/introduction>

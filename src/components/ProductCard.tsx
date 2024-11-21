@@ -1,9 +1,14 @@
+"use client";
 import Image from "next/image";
 import { Card } from "./ui/card";
 import { Product } from "@/types";
 import { Button } from "./ui/button";
+import { CartStore } from "@/hooks/cartStore";
 
 const ProductCard = ({ product }: { product: Product }) => {
+ const isInCart = CartStore((state) => state.isProductInCart(product));
+ const addToCart = CartStore((state) => state.addToCart);
+ const removeFromCart = CartStore((state) => state.removeFromCart);
  return (
   <Card
    key={product.item_ID}

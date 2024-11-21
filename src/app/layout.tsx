@@ -33,7 +33,7 @@ export default function RootLayout({
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
      <SidebarProvider>
       <Sidemenu />
-      <main className="flex-1 md:ml-16 p-4">
+      <main className="flex-1 p-4">
        <TopBar />
        {children}
       </main>
